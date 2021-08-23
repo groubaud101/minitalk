@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/23 13:36:31 by user42            #+#    #+#             */
-/*   Updated: 2021/08/23 17:49:47 by user42           ###   ########.fr       */
+/*   Updated: 2021/08/23 18:45:06 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,12 @@
 #include <signal.h>
 #include <unistd.h>
 
-//void	signal_handler(int signum, siginfo_t *some,
-//					void *thing)
 void	signal_handler(int signum)
 {
 	static int	c = 0;
 	static int	nb = 128;
 
 	c += (signum == SIGUSR1) * nb;
-	//(void)some;
-	//(void)thing;
 	nb /= 2;
 	if (nb == 0)
 	{
@@ -42,8 +38,9 @@ int	main(void)
 	s.sa_handler = signal_handler;
 	while (1)
 	{
-		sigaction(SIGUSR1, &s, 0);
-		sigaction(SIGUSR2, &s, 0);
+		if (sigaction(SIGUSR1, &s, 0) == -1
+			|| sigaction(SIGUSR2, &s, 0) == -1)
+			return (0);
 		pause();
 	}
 	return (1);

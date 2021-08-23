@@ -19,7 +19,7 @@ DIR_S	=	./
 INC_L	=	$(DIR_L)include/
 
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra
+CFLAGS	=	-Wall -Wextra -Werror
 LIB		=	-L $(DIR_S) -lft
 
 OBS_SERV=	ft_server.o

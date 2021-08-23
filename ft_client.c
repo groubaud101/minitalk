@@ -6,12 +6,14 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/23 13:00:00 by user42            #+#    #+#             */
-/*   Updated: 2021/08/23 17:41:35 by user42           ###   ########.fr       */
+/*   Updated: 2021/08/23 18:24:52 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "ft_printf.h"
-# include <signal.h>
+#include "ft_printf.h"
+#include "libft.h"
+#include <sys/types.h>
+#include <signal.h>
 
 int	ft_send_byte(int pid, int c)
 {
@@ -20,16 +22,17 @@ int	ft_send_byte(int pid, int c)
 
 	byte = 0;
 	nb = 128;
-	ft_printf("c : %i (%c)\n", c, c);
 	while (byte < 8)
 	{
 		if (c >= nb)
 		{
-			kill(pid, SIGUSR1);
+			if (kill(pid, SIGUSR1) == -1)
+				return (ft_printf("Error kill\n"));
 			c = c - nb;
 		}
 		else
-			kill(pid, SIGUSR2);
+			if (kill(pid, SIGUSR2) == -1)
+				return (ft_printf("Error kill\n"));
 		nb /= 2;
 		byte++;
 	}
@@ -47,6 +50,5 @@ int	main(int ac, char **av)
 	pid = ft_atoi(av[1]);
 	while (av[2][i])
 		ft_send_byte(pid, av[2][i++]);
-	ft_printf("\n");
 	return (1);
 }
