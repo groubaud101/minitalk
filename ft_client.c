@@ -6,75 +6,117 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/23 13:00:00 by user42            #+#    #+#             */
-/*   Updated: 2021/08/24 20:14:21 by user42           ###   ########.fr       */
+/*   Updated: 2021/08/25 22:19:23 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include "libft.h"
-#include <sys/types.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <limits.h>
 
-int	ft_send(pid_t pid, int send, int nb)
+#define MY 1
+
+#if !MY
+int	ft_send(char *s, int id)
 {
-	int	sig_to_send;
+	static int	c;
+	static int	bit = -1;
+	static char	*str;
+	static int	pid;
 
-	//ft_printf("nb to send : %i\n", send);
-	while (nb > 0)
+	if (!str)
+		str = s;
+	if (id != -1)
+		pid = id;
+	if (bit < 0)
 	{
-		sig_to_send = (send >= nb) * SIGUSR1 + !(send >= nb) * SIGUSR2;
-		//ft_printf("nb : %i(%i), ", nb, sig_to_send);
-		send -= (nb * (send >= nb));
-		if (kill(pid, sig_to_send) == -1)
+		c = *str++;
+		if (!c)
 			return (-1);
-		usleep(5000);
-		nb /= 2;
+		bit = 7;
 	}
-	//ft_printf("\n");
+	if ((c >> bit--) & 1)
+		kill(pid, SIGUSR1);
+	else
+		kill(pid, SIGUSR2);
 	return (1);
 }
+#endif
 
-#define BYTE1 256
-#define BYTE2 65536
-#define BYTE3 16777216
-
-int	ft_send_pid_client(int pid_client, int pid_server)
+#if MY
+int	ft_send(char *s, int id)
 {
-	int	size;
+	static pid_t	pid;
+	static int		c;
+	static int		nb = 128;
+	static char		*str = 0;
+	//int				sig_to_send;
 
-	//ft_printf("pid client : %i\n", pid_client);
-	size = (1 + (pid_client >= BYTE1) + (pid_client >= BYTE2)
-		+ (pid_client >= BYTE3));
-	// quelle taille je vais recevoir
-	ft_send(pid_server, size, 4); //pid, nb de byte à lire, le nb max
-	// envoie du pid du client
-	ft_send(pid_server, pid_client, ft_pow_int(2, size * 8));
-	//ft_printf("pid server : %i, size : %i\n\n", pid_server, size);
+	ft_printf("c : %i, nb : %i, sig : ", c, nb);
+	if (!str)
+	{
+		c = *s;
+		str = s;
+	}
+	if (id != -1)
+		pid = id;
+	if (nb == 0)
+	{
+		c = *(str++);
+		if (!c)
+			exit(0);
+		nb = 128;
+	}
+	//sig_to_send = (c >= nb) * SIGUSR1 + !(c >= nb) * SIGUSR2;
+	if (c >= nb)
+	{
+		kill(pid, SIGUSR1);
+		ft_printf("10\n\n");
+	}
+	else
+	{
+		kill(pid, SIGUSR2);
+		ft_printf("12\n\n");
+	}
+	c -= (nb * (c >= nb));
+	nb /= 2;
 	return (1);
+}
+#endif
+void	signal_handler(int sig, siginfo_t *info, void *ucontext)
+{
+	(void)info;
+	(void)ucontext;
+	if (sig == SIGUSR1)
+		if (ft_send(NULL, -1) == -1)
+		{
+			ft_printf("Error kill\n");
+			exit(0);
+		}
 }
 
 int	main(int ac, char **av)
 {
-	pid_t	pid_server;
-	int		i;
+	int					pid_server;
+	struct sigaction	s;
 
 	if (ac < 3)
 		return (ft_printf("%s PID \"message to send\"\n", av[0]));
 	pid_server = ft_atoi(av[1]);
-	if (pid_server == 0) // || ft_strisdigit(av[1]) == 0)
+	if (pid_server <= 1) // || ft_strisdigit(av[1]) == 0)
 		return (0);
-	ft_send_pid_client(getpid(), pid_server);
-	i = 0;
-	while (av[2][i])
-	{
-		// quelle taille je vais recevoir
-		ft_send(pid_server, 1, 4);
-		// envoie de l'int du caractere
-		ft_send(pid_server, av[2][i], 256);
-		ft_printf("%c", av[2][i]);
-		i++;
-	}
-	return (1);
+
+	s.sa_flags = SA_SIGINFO;
+	s.sa_sigaction = signal_handler;
+	if (sigaction(SIGUSR1, &s, 0) == -1)
+		return (ft_printf("Error sigaction\n"));
+
+	if (ft_send(av[2], pid_server) == -1)
+		return (ft_printf("Error kill\n"));
+	while (1)
+		pause();
+
+	return (0);
 }
