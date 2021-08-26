@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/23 13:36:31 by user42            #+#    #+#             */
-/*   Updated: 2021/08/26 13:03:43 by user42           ###   ########.fr       */
+/*   Updated: 2021/08/26 14:27:54 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,11 @@ void	signal_handler(int sig, siginfo_t *info, void *ucontext)
 		c = 0;
 	}
 	nb /= 2;
-	kill(info->si_pid, SIGUSR1);
+	if (kill(info->si_pid, SIGUSR1) == -1)
+	{
+		ft_printf_fd(2, "Error kill\n");
+		exit(1);
+	}
 }
 
 int	main(void)
@@ -43,8 +47,8 @@ int	main(void)
 	s.sa_sigaction = signal_handler;
 	if (sigaction(SIGUSR1, &s, 0) == -1
 		|| sigaction(SIGUSR2, &s, 0) == -1)
-		return (ft_printf("Error sigaction\n"));
+		return (ft_printf_fd(2, "Error sigaction\n"));
 	while (1)
 		pause();
-	return (1);
+	return (0);
 }

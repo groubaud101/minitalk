@@ -11,19 +11,44 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+#include <stdlib.h>
+#include <unistd.h>
 
-int	ft_printf(const char *format, ...)
+const char	*ft_aff_format(t_printf *ptr, const char *format)
+{
+	int	i;
+
+	i = 0;
+	while (format[i] && format[i] != '%')
+		i++;
+	write(ptr->fd, (char *)format, i);
+	ptr->ret += i;
+	return (format + i);
+}
+
+int	ft_printf_part_two(t_printf *ptr, va_list params)
+{
+	if (ptr->conv[ptr->num_conv] != '%')
+		ft_conversion(ptr, params);
+	else
+		ft_conv_mod(ptr);
+	if (ptr->ret == -1)
+		return (-1);
+	return (1);
+}
+
+int	ft_printf_fd(int fd, const char *format, ...)
 {
 	va_list		params;
 	t_printf	ptr;
 
 	va_start(params, format);
-	ptr = (t_printf){1, FLAGS, -1, -1, -1, -1, -1, CONVERSION, -1, 0, 0};
+	ptr = (t_printf){fd, FLAGS, -1, -1, -1, -1, -1, CONVERSION, -1, 0, 0};
 	while (*format)
 	{
 		if (*format == '%')
 		{
-			ptr = (t_printf){1, FLAGS, -1, -1, -1, -1, -1, CONVERSION,
+			ptr = (t_printf){fd, FLAGS, -1, -1, -1, -1, -1, CONVERSION,
 				-1, 0, ptr.ret};
 			format++;
 			if (ft_fill_tprintf(&ptr, params, format) == -1)

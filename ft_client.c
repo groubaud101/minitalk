@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/23 13:00:00 by user42            #+#    #+#             */
-/*   Updated: 2021/08/26 13:01:46 by user42           ###   ########.fr       */
+/*   Updated: 2021/08/26 14:30:41 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 static int	ft_init_c(char *str)
 {
 	if (!(*str))
-		exit(0);
+		exit(1);
 	return (*str);
 }
 
@@ -60,8 +60,8 @@ static void	signal_handler(int sig, siginfo_t *info, void *ucontext)
 	{
 		if (ft_send(NULL, -1) == -1)
 		{
-			ft_printf("Error kill\n");
-			exit(0);
+			ft_printf_fd(2, "Error kill\n");
+			exit(1);
 		}
 	}
 }
@@ -72,16 +72,16 @@ int	main(int ac, char **av)
 	struct sigaction	s;
 
 	if (ac < 3)
-		return (ft_printf("%s PID \"message to send\"\n", av[0]));
+		return (ft_printf_fd(2, "%s PID \"message to send\"\n", av[0]));
 	pid_server = ft_atoi(av[1]);
 	if (pid_server <= 1 || ft_str_isdigit(av[1]) == 0)
-		return (ft_printf("Error PID\n"));
+		return (ft_printf_fd(2, "Error PID\n"));
 	s.sa_flags = SA_SIGINFO;
 	s.sa_sigaction = signal_handler;
 	if (sigaction(SIGUSR1, &s, 0) == -1)
-		return (ft_printf("Error sigaction\n"));
+		return (ft_printf_fd(2, "Error sigaction\n"));
 	if (ft_send(av[2], pid_server) == -1)
-		return (ft_printf("Error kill\n"));
+		return (ft_printf_fd(2, "Error kill\n"));
 	while (1)
 		pause();
 	return (0);

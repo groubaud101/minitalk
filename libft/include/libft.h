@@ -151,7 +151,6 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int nb, char c));
 void	ft_putchar(char c);
 void	ft_putchar_fd(char c, int fd);
 void	ft_put_uchar(unsigned char c);
-void	ft_put_uchar(unsigned char c);
 void	ft_put_uchar_fd(unsigned char c, int fd);
 void	ft_putstr(const char *s);
 void	ft_putnstr(const char *str, int n);

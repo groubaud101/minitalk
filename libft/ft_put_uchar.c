@@ -16,3 +16,8 @@ void	ft_put_uchar(unsigned char c)
 {
 	write(1, &c, 1);
 }
+
+void	ft_put_uchar_fd(unsigned char c, int fd)
+{
+	write(fd, &c, 1);
+}

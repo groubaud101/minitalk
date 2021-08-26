@@ -28,7 +28,8 @@ SLIB	=	abs add atoi_base atoi bzero calloc div isalnum isalpha isascii \
 			u_lltoa_base put_int put_uint put_ulong put_ulonglong the_max \
 			the_min put_uchar atoi_no_overflow pow_int str_isdigit
 
-SPRINTF	=	printf fill_tprintf conversion_cspmod conversion_diuxx aff
+SPRINTF	=	printf printf_fd fill_tprintf conversion_cspmod conversion_diuxx \
+			aff
 
 GNL		=	get_next_line get_next_line_utils
 

@@ -22,14 +22,14 @@ static int	ft_conv_c(t_printf *ptr, va_list params)
 	if (ptr->minus == -1)
 	{
 		while (i++ < ptr->field)
-			ft_putchar(' ');
-		ft_put_uchar(c);
+			ft_putchar_fd(' ', ptr->fd);
+		ft_put_uchar_fd(c, ptr->fd);
 	}
 	else
 	{
-		ft_put_uchar(c);
+		ft_put_uchar_fd(c, ptr->fd);
 		while (i++ < ptr->field)
-			ft_putchar(' ');
+			ft_putchar_fd(' ', ptr->fd);
 	}
 	ptr->ret += i - 1;
 	return (1);
@@ -52,7 +52,7 @@ static int	ft_conv_p(t_printf *ptr, va_list params)
 
 	nb = (unsigned long long)va_arg(params, void *);
 	if (ptr->zero == 1)
-		ft_putstr("0x");
+		ft_putstr_fd("0x", ptr->fd);
 	ptr->ret += ft_aff_p(ptr, ft_len_ulonglong_base(nb, 16) + 2, nb);
 	return (1);
 }
@@ -69,11 +69,11 @@ int	ft_conv_mod(t_printf *ptr)
 	i = 1;
 	if (ptr->minus == -1)
 		while (i++ < ptr->field)
-			ft_putchar(c);
-	ft_putchar('%');
+			ft_putchar_fd(c, ptr->fd);
+	ft_putchar_fd('%', ptr->fd);
 	if (ptr->minus != -1)
 		while (i++ < ptr->field)
-			ft_putchar(c);
+			ft_putchar_fd(c, ptr->fd);
 	ptr->ret += i - 1;
 	return (1);
 }

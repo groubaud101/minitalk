@@ -24,21 +24,21 @@ int	ft_aff_di(t_printf *ptr, int len_uint, int nb)
 		if (ptr->zero == 1)
 		{
 			if (nb < 0)
-				ft_putchar('-');
+				ft_putchar_fd('-', ptr->fd);
 			while (ptr->field > len++)
-				ft_putchar('0');
+				ft_putchar_fd('0', ptr->fd);
 		}
 		else
 		{
 			while (ptr->field > len++)
-				ft_putchar(' ');
+				ft_putchar_fd(' ', ptr->fd);
 			if (nb < 0)
-				ft_putchar('-');
+				ft_putchar_fd('-', ptr->fd);
 		}
 	}
 	else
 		while (ptr->field > len++)
-			ft_putchar(' ');
+			ft_putchar_fd(' ', ptr->fd);
 	return (1);
 }
 
@@ -51,14 +51,14 @@ int	ft_aff_uxx(t_printf *ptr, int len_uint, int exist)
 	{
 		if (ptr->zero == 1)
 			while (ptr->field > len++)
-				ft_putchar('0');
+				ft_putchar_fd('0', ptr->fd);
 		else
 			while (ptr->field > len++)
-				ft_putchar(' ');
+				ft_putchar_fd(' ', ptr->fd);
 	}
 	else
 		while (ptr->field > len++)
-			ft_putchar(' ');
+			ft_putchar_fd(' ', ptr->fd);
 	return (1);
 }
 
@@ -75,18 +75,18 @@ int	ft_aff_p(t_printf *ptr, int len, unsigned long long n)
 	if (ptr->minus == 1)
 	{
 		if (ptr->zero != 1)
-			ft_putstr("0x");
+			ft_putstr_fd("0x", ptr->fd);
 		if (!(ptr->precis == 0 && n == 0))
-			ft_put_ulonglong_base(n, "0123456789abcdef");
+			ft_put_ulonglong_base_fd(n, "0123456789abcdef", 16, ptr->fd);
 	}
 	while (i > 0 && i-- > len)
-		ft_putchar(c);
+		ft_putchar_fd(c, ptr->fd);
 	if (ptr->minus != 1)
 	{
 		if (ptr->zero != 1)
-			ft_putstr("0x");
+			ft_putstr_fd("0x", ptr->fd);
 		if (!(ptr->precis == 0 && n == 0))
-			ft_put_ulonglong_base(n, "0123456789abcdef");
+			ft_put_ulonglong_base_fd(n, "0123456789abcdef", 16, ptr->fd);
 	}
 	return (ft_the_max(3, ptr->precis, ptr->field, len));
 }
@@ -101,10 +101,10 @@ int	ft_aff_s(t_printf *ptr, const char *str)
 		len = ft_the_min(2, ft_strlen(str), ptr->precis);
 	i = ptr->field;
 	if (ptr->minus == 1)
-		write(1, str, len);
+		write(ptr->fd, str, len);
 	while (i-- > len)
-		ft_putchar(' ');
+		ft_putchar_fd(' ', ptr->fd);
 	if (ptr->minus != 1)
-		write(1, str, len);
+		write(ptr->fd, str, len);
 	return (ft_the_max(2, len, ptr->field));
 }

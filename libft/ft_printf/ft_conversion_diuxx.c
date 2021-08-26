@@ -26,11 +26,11 @@ int	ft_conv_di(t_printf *ptr, va_list params)
 		ft_aff_di(ptr, len_uint, nb);
 	len = len_uint - (nb == 0 && ptr->precis == 0);
 	if (ptr->minus == 1 && nb < 0)
-		ft_putchar('-');
+		ft_putchar_fd('-', ptr->fd);
 	while (ptr->precis > len++)
-		ft_putchar('0');
+		ft_putchar_fd('0', ptr->fd);
 	if (!(ptr->precis == 0 && nb == 0))
-		ft_put_uint_base(u_nb, "0123456789");
+		ft_put_uint_base_fd(u_nb, "0123456789", 10, ptr->fd);
 	else if (ptr->field <= 0)
 		ptr->ret--;
 	if (ptr->minus == 1)
@@ -54,9 +54,9 @@ int	ft_conv_u(t_printf *ptr, va_list params)
 		ft_aff_uxx(ptr, len_uint, not_exist);
 	len = len_uint - not_exist;
 	while (ptr->precis > len++)
-		ft_putchar('0');
+		ft_putchar_fd('0', ptr->fd);
 	if (!(ptr->precis == 0 && nb == 0))
-		ft_put_uint_base(nb, "0123456789");
+		ft_put_uint_base_fd(nb, "0123456789", 10, ptr->fd);
 	else if (ptr->field <= 0)
 		ptr->ret--;
 	if (ptr->minus == 1)
@@ -79,9 +79,9 @@ int	ft_conv_x(t_printf *ptr, va_list params)
 		ft_aff_uxx(ptr, len_uint, not_exist);
 	len = len_uint - not_exist;
 	while (ptr->precis > len++)
-		ft_putchar('0');
+		ft_putchar_fd('0', ptr->fd);
 	if (!(ptr->precis == 0 && nb == 0))
-		ft_put_uint_base(nb, "0123456789abcdef");
+		ft_put_uint_base_fd(nb, "0123456789abcdef", 16, ptr->fd);
 	else if (ptr->field <= 0)
 		ptr->ret--;
 	if (ptr->minus == 1)
@@ -104,9 +104,9 @@ int	ft_conv_xup(t_printf *ptr, va_list params)
 		ft_aff_uxx(ptr, len_uint, not_exist);
 	len = len_uint - not_exist;
 	while (ptr->precis > len++)
-		ft_putchar('0');
+		ft_putchar_fd('0', ptr->fd);
 	if (!(ptr->precis == 0 && nb == 0))
-		ft_put_uint_base(nb, "0123456789ABCDEF");
+		ft_put_uint_base_fd(nb, "0123456789ABCDEF", 16, ptr->fd);
 	else if (ptr->field <= 0)
 		ptr->ret--;
 	if (ptr->minus == 1)
