@@ -16,6 +16,8 @@
 # include <string.h>
 
 # define ATOI_ERROR 0
+# define TRUE 1
+# define FALSE 0
 
 # ifndef BUFF
 #  define BUFF 11
@@ -58,6 +60,7 @@ int		ft_isdigit(int c);
 int		ft_isprint(int c);
 int		ft_isspace(int c);
 int		ft_isinstr(int c, const char *str);
+int		ft_str_isdigit(char *str);
 
 /*
 ** Up or low the case
